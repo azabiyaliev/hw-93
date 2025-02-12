@@ -13,7 +13,7 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { Album, AlbumDocument } from '../schemas/album.schema';
 import { Model } from 'mongoose';
-import { Artist } from '../schemas/artist.schema';
+import { Artist, ArtistDocument } from '../schemas/artist.schema';
 import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('albums')
@@ -22,7 +22,7 @@ export class AlbumsController {
     @InjectModel(Album.name)
     private albumModel: Model<AlbumDocument>,
     @InjectModel(Artist.name)
-    private artistModel: Model<AlbumDocument>,
+    private artistModel: Model<ArtistDocument>,
   ) {}
   @Get()
   getAlbums(@Query('artist') idArtist: string) {
