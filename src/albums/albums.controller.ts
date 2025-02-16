@@ -8,6 +8,7 @@ import {
   Post,
   Query,
   UploadedFile,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
@@ -17,6 +18,8 @@ import { Artist, ArtistDocument } from '../schemas/artist.schema';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
+import { RolesGuard } from '../roles/roles.guard';
+import { TokenAuthGuard } from '../token-auth/token-auth.guard';
 
 @Controller('albums')
 export class AlbumsController {
@@ -40,6 +43,7 @@ export class AlbumsController {
     if (!album) throw new NotFoundException('Album not found');
     return album;
   }
+  @UseGuards(TokenAuthGuard)
   @Post()
   @UseInterceptors(
     FileInterceptor('image', {
@@ -65,6 +69,7 @@ export class AlbumsController {
     });
     return await newAlbum.save();
   }
+  @UseGuards(RolesGuard)
   @Delete(':id')
   async delete(@Param('id') id: string) {
     const album = await this.albumModel.findByIdAndDelete(id);

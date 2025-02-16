@@ -7,6 +7,7 @@ import {
   Param,
   Post,
   UploadedFile,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { Artist, ArtistDocument } from '../schemas/artist.schema';
@@ -16,6 +17,8 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { CreateArtistDto } from './create-artist.dto';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
+import { RolesGuard } from '../roles/roles.guard';
+import { TokenAuthGuard } from '../token-auth/token-auth.guard';
 
 @Controller('artists')
 export class ArtistsController {
@@ -33,6 +36,7 @@ export class ArtistsController {
     if (!artist) throw new NotFoundException('Artist not found');
     return artist;
   }
+  @UseGuards(TokenAuthGuard)
   @Post()
   @UseInterceptors(
     FileInterceptor('photo', {
@@ -55,6 +59,7 @@ export class ArtistsController {
     });
     return await newArtist.save();
   }
+  @UseGuards(RolesGuard)
   @Delete(':id')
   async delete(@Param('id') id: string) {
     const artist = await this.artistModel.findByIdAndDelete(id);
